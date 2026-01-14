@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +71,7 @@ public class CustomerModel {
             //TODO
             // 1. Merges items with the same product ID (combining their quantities).
             // 2. Sorts the products in the trolley by product ID.
-            trolley.add(theProduct);
+        	 addProductToTrolley(theProduct);
             displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
         }
         else{
@@ -78,6 +79,36 @@ public class CustomerModel {
             System.out.println("must search and get an available product before add to trolley");
         }
         displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+        updateView();
+    }
+    
+    void removeFromTrolley() {
+        String productId = cusView.tfId.getText().trim();
+        if (productId.isEmpty()) {
+            displayLaSearchResult = "Please type ProductID to remove from the trolley";
+            updateView();
+            return;
+        }
+
+        boolean removed = false;
+        for (int i = 0; i < trolley.size(); i++) {
+            Product product = trolley.get(i);
+            if (product.getProductId().equals(productId)) {
+                if (product.getOrderedQuantity() > 1) {
+                    product.setOrderedQuantity(product.getOrderedQuantity() - 1);
+                } else {
+                    trolley.remove(i);
+                }
+                removed = true;
+                break;
+            }
+        }
+
+        if (!removed) {
+            displayLaSearchResult = "Item not found in trolley for ID " + productId;
+        }
+        displayTaTrolley = trolley.isEmpty() ? "Your trolley is empty" : ProductListFormatter.buildString(trolley);
+        displayTaReceipt = "";
         updateView();
     }
 
@@ -150,6 +181,21 @@ public class CustomerModel {
             }
         }
         return new ArrayList<>(grouped.values());
+    }
+
+    private void addProductToTrolley(Product product) {
+        for (Product existing : trolley) {
+            if (existing.getProductId().equals(product.getProductId())) {
+                existing.setOrderedQuantity(existing.getOrderedQuantity() + 1);
+                Collections.sort(trolley);
+                return;
+            }
+        }
+        Product newItem = new Product(product.getProductId(), product.getProductDescription(),
+                product.getProductImageName(), product.getUnitPrice(), product.getStockQuantity());
+        newItem.setOrderedQuantity(1);
+        trolley.add(newItem);
+        Collections.sort(trolley);
     }
 
     void cancel(){

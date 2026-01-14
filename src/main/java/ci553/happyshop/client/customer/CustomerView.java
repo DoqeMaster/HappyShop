@@ -100,7 +100,10 @@ public class CustomerView  {
         Button btnAddToTrolley = new Button("Add to Trolley");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
         btnAddToTrolley.setOnAction(this::buttonClicked);
-        HBox hbBtns = new HBox(10, laPlaceHolder,btnSearch, btnAddToTrolley);
+        Button btnRemoveFromTrolley = new Button("Remove from Trolley");
+        btnRemoveFromTrolley.setStyle(UIStyle.buttonStyle);
+        btnRemoveFromTrolley.setOnAction(this::buttonClicked);
+        HBox hbBtns = new HBox(10, laPlaceHolder,btnSearch, btnAddToTrolley, btnRemoveFromTrolley);
 
         ivProduct = new ImageView("imageHolder.jpg");
         ivProduct.setFitHeight(60);
