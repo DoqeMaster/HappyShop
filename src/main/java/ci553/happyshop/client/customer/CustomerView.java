@@ -38,8 +38,7 @@ public class CustomerView  {
     private VBox vbReceiptPage;
 
     TextField tfId; //for user input on the search page. Made accessible so it can be accessed or modified by CustomerModel
-    TextField tfName; //for user input on the search page. Made accessible so it can be accessed by CustomerModel
-
+  
     //four controllers needs updating when program going on
     private ImageView ivProduct; //image area in searchPage
     private Label lbProductInfo;//product text info in searchPage
@@ -79,19 +78,13 @@ public class CustomerView  {
         Label laPageTitle = new Label("Search by Product ID/Name");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
 
-        Label laId = new Label("ID:      ");
+        Label laId = new Label("ID/Name      ");
         laId.setStyle(UIStyle.labelStyle);
+        laId.setMinWidth(85);
         tfId = new TextField();
-        tfId.setPromptText("eg. 0001");
+        tfId.setPromptText("eg. 0001 or tv");
         tfId.setStyle(UIStyle.textFiledStyle);
         HBox hbId = new HBox(10, laId, tfId);
-
-        Label laName = new Label("Name:");
-        laName.setStyle(UIStyle.labelStyle);
-        tfName = new TextField();
-        tfName.setPromptText("implement it if you want");
-        tfName.setStyle(UIStyle.textFiledStyle);
-        HBox hbName = new HBox(10, laName, tfName);
 
         Button btnSearch = new Button("Search");
         btnSearch.setStyle(UIStyle.buttonStyle);
@@ -126,7 +119,7 @@ public class CustomerView  {
         HBox hbSearchResult = new HBox(5, ivProduct, lbProductInfo);
         hbSearchResult.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, vbBtns, hbSearchResult);  vbSearchPage.setPrefWidth(COLUMN_WIDTH);
+        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, vbBtns, hbSearchResult);  vbSearchPage.setPrefWidth(COLUMN_WIDTH);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
 

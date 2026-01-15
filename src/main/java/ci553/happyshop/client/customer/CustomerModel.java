@@ -39,7 +39,6 @@ public class CustomerModel {
     //SELECT productID, description, image, unitPrice,inStock quantity
     void search() throws SQLException {
         String productId = cusView.tfId.getText().trim();
-        String productName = cusView.tfName.getText().trim();
         theProduct = null;
 
         if (!productId.isEmpty()) {
@@ -47,21 +46,18 @@ public class CustomerModel {
             if (theProduct != null && theProduct.getStockQuantity() > 0) {
                 displayLaSearchResult = buildProductInfo(theProduct, productId);
             } else {
-                displayLaSearchResult = "No Product was found with ID " + productId;
-                System.out.println("No Product was found with ID " + productId);
-            }
-        } else if (!productName.isEmpty()) {
-            ArrayList<Product> matches = databaseRW.searchProduct(productName);
-            if (!matches.isEmpty()) {
-                theProduct = matches.get(0);
-                String matchInfo = matches.size() > 1
-                        ? String.format("Found %d matches for \"%s\". Showing the first result.\n",
-                        matches.size(), productName)
-                        : "";
-                displayLaSearchResult = matchInfo + buildProductInfo(theProduct, theProduct.getProductId());
-            } else {
-                displayLaSearchResult = "No Product was found matching \"" + productName + "\"";
-                System.out.println("No Product was found matching \"" + productName + "\"");
+                ArrayList<Product> matches = databaseRW.searchProduct(productId);
+                if (!matches.isEmpty()) {
+                    theProduct = matches.get(0);
+                    String matchInfo = matches.size() > 1
+                            ? String.format("Found %d matches for \"%s\". Showing the first result.\n",
+                            matches.size(), productId)
+                            : "";
+                    displayLaSearchResult = matchInfo + buildProductInfo(theProduct, theProduct.getProductId());
+                } else {
+                    displayLaSearchResult = "No Product was found matching \"" + productId + "\"";
+                    System.out.println("No Product was found matching \"" + productId + "\"");
+                }
             }
         } else {
             displayLaSearchResult = "Please type ProductID or Name";
