@@ -23,6 +23,7 @@ import java.util.Map;
  */
 public class CustomerModel {
     public CustomerView cusView;
+    public RemoveProductNotifier removeProductNotifier;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
                                   //Benefits: Flexibility: Easily change the database implementation.
 
@@ -135,6 +136,9 @@ public class CustomerModel {
                         ProductListFormatter.buildString(theOrder.getProductList())
                 );
                 System.out.println(displayTaReceipt);
+                if (removeProductNotifier != null) {
+                    removeProductNotifier.closeNotifierWindow();
+                }
             }
             else{ // Some products have insufficient stock — build an error message to inform the customer
                 StringBuilder errorMsg = new StringBuilder();
@@ -152,7 +156,14 @@ public class CustomerModel {
                 // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
                 //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
                 //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
+                removeProductsFromTrolley(insufficientProducts);
+                displayTaTrolley = trolley.isEmpty() ? "Your trolley is empty" : ProductListFormatter.buildString(trolley);
+                String removalMsg = "The following items were removed due to insufficient stock:\n" + errorMsg.toString();
+                if (removeProductNotifier != null) {
+                    removeProductNotifier.showRemovalMsg(removalMsg);
+                } else {
+                    displayLaSearchResult = removalMsg;
+                }
                 System.out.println("stock is not enough");
             }
         }
@@ -176,8 +187,10 @@ public class CustomerModel {
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
                 // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
+            	   Product copy = new Product(p.getProductId(), p.getProductDescription(),
+                           p.getProductImageName(), p.getUnitPrice(), p.getStockQuantity());
+                   copy.setOrderedQuantity(p.getOrderedQuantity());
+                   grouped.put(id, copy);
             }
         }
         return new ArrayList<>(grouped.values());
@@ -201,6 +214,9 @@ public class CustomerModel {
     void cancel(){
         trolley.clear();
         displayTaTrolley="";
+        if (removeProductNotifier != null) {
+            removeProductNotifier.closeNotifierWindow();
+        }
         updateView();
     }
     void closeReceipt(){
@@ -228,5 +244,11 @@ public class CustomerModel {
     //for test only
     public ArrayList<Product> getTrolley() {
         return trolley;
+    }
+
+    private void removeProductsFromTrolley(ArrayList<Product> insufficientProducts) {
+        for (Product insufficient : insufficientProducts) {
+            trolley.removeIf(product -> product.getProductId().equals(insufficient.getProductId()));
+        }
     }
 }

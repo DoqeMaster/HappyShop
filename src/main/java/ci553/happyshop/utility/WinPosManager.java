@@ -32,6 +32,7 @@ public final class WinPosManager {
 
     private static double occupiedWidth = 0; // total width of all windows on current row
     private static double occupiedHeight = 0;
+    private static double currentRowHeight = 0;
     private static double x = BASE_X; //x position for current window
     private static double y = BASE_Y;//y position for current window
 
@@ -43,12 +44,13 @@ public final class WinPosManager {
     public static void registerWindow(Stage stage, double width, double height) {
         // Case 1: Fits in current row and within screen height
         if ((occupiedWidth + width < SCREEN_WIDTH - BASE_X) &&
-                (occupiedHeight + height < SCREEN_HEIGHT - BASE_Y)) {
-            stage.setX(x);
+        		  (occupiedHeight + Math.max(currentRowHeight, height) < SCREEN_HEIGHT - BASE_Y)) {
+        	stage.setX(x);
             stage.setY(y);
 
             occupiedWidth += width + GAP;
             x += width + GAP;
+            currentRowHeight = Math.max(currentRowHeight, height);
         }
 
         // Case 2: New row (horizontal overflow, but vertical space available)
@@ -56,14 +58,15 @@ public final class WinPosManager {
             // Move to next row
             occupiedWidth = 0;
             x = BASE_X;
-            y += height + GAP * 4;
+            y += currentRowHeight + GAP * 4;
+            occupiedHeight += currentRowHeight + GAP * 4;
+            currentRowHeight = height;
 
             stage.setX(x);
             stage.setY(y);
 
             occupiedWidth += width + GAP;
             x += width + GAP;
-            occupiedHeight += height + GAP;
         }
 
         // Case 3: No space — fallback to fixed position (bottom-right stack)
