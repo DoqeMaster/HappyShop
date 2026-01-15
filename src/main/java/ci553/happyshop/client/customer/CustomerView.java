@@ -93,18 +93,25 @@ public class CustomerView  {
         tfName.setStyle(UIStyle.textFiledStyle);
         HBox hbName = new HBox(10, laName, tfName);
 
-        Label laPlaceHolder = new Label(  " ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
         Button btnSearch = new Button("Search");
         btnSearch.setStyle(UIStyle.buttonStyle);
+        btnSearch.setMinWidth(120);
         btnSearch.setOnAction(this::buttonClicked);
         Button btnAddToTrolley = new Button("Add to Trolley");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
+        btnAddToTrolley.setMinWidth(120);
         btnAddToTrolley.setOnAction(this::buttonClicked);
         Button btnRemoveFromTrolley = new Button("Remove from Trolley");
         btnRemoveFromTrolley.setStyle(UIStyle.buttonStyle);
+        btnRemoveFromTrolley.setMinWidth(160);
         btnRemoveFromTrolley.setOnAction(this::buttonClicked);
-        HBox hbBtns = new HBox(10, laPlaceHolder,btnSearch, btnAddToTrolley, btnRemoveFromTrolley);
-
+        HBox hbPrimaryBtns = new HBox(10, btnSearch, btnAddToTrolley);
+        hbPrimaryBtns.setAlignment(Pos.CENTER);
+        HBox hbRemoveBtn = new HBox(btnRemoveFromTrolley);
+        hbRemoveBtn.setAlignment(Pos.CENTER);
+        VBox vbBtns = new VBox(8, hbPrimaryBtns, hbRemoveBtn);
+        vbBtns.setAlignment(Pos.CENTER);
+        
         ivProduct = new ImageView("imageHolder.jpg");
         ivProduct.setFitHeight(60);
         ivProduct.setFitWidth(60);
@@ -118,8 +125,7 @@ public class CustomerView  {
         HBox hbSearchResult = new HBox(5, ivProduct, lbProductInfo);
         hbSearchResult.setAlignment(Pos.CENTER_LEFT);
 
-        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, hbBtns, hbSearchResult);
-        vbSearchPage.setPrefWidth(COLUMN_WIDTH);
+        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, vbBtns, hbSearchResult);  vbSearchPage.setPrefWidth(COLUMN_WIDTH);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
 
@@ -132,19 +138,26 @@ public class CustomerView  {
 
         taTrolley = new TextArea();
         taTrolley.setEditable(false);
-        taTrolley.setPrefSize(WIDTH/2, HEIGHT-50);
-
+        taTrolley.setWrapText(true);
+        taTrolley.setPrefSize(WIDTH/2 - 20, HEIGHT-50);
+        
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(this::buttonClicked);
         btnCancel.setStyle(UIStyle.buttonStyle);
+        btnCancel.setMinWidth(120);
 
         Button btnCheckout = new Button("Check Out");
         btnCheckout.setOnAction(this::buttonClicked);
         btnCheckout.setStyle(UIStyle.buttonStyle);
+        btnCheckout.setMinWidth(120);
 
-        HBox hbBtns = new HBox(10, btnCancel,btnCheckout);
+       
+
+        FlowPane hbBtns = new FlowPane(10, 10, btnCancel, btnCheckout);
         hbBtns.setStyle("-fx-padding: 15px;");
         hbBtns.setAlignment(Pos.CENTER);
+        hbBtns.setPrefWrapLength(COLUMN_WIDTH - 20);
+
 
         vbTrolleyPage = new VBox(15, laPageTitle, taTrolley, hbBtns);
         vbTrolleyPage.setPrefWidth(COLUMN_WIDTH);
