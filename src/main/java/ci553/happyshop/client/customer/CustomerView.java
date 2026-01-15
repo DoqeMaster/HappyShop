@@ -139,7 +139,8 @@ public class CustomerView  {
         taTrolley = new TextArea();
         taTrolley.setEditable(false);
         taTrolley.setWrapText(true);
-        taTrolley.setPrefSize(WIDTH/2 - 20, HEIGHT-50);
+        taTrolley.setPrefSize(WIDTH/2 - 20, HEIGHT-80);
+        VBox.setVgrow(taTrolley, Priority.ALWAYS);
         
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(this::buttonClicked);
@@ -150,8 +151,6 @@ public class CustomerView  {
         btnCheckout.setOnAction(this::buttonClicked);
         btnCheckout.setStyle(UIStyle.buttonStyle);
         btnCheckout.setMinWidth(120);
-
-       
 
         FlowPane hbBtns = new FlowPane(10, 10, btnCancel, btnCheckout);
         hbBtns.setStyle("-fx-padding: 15px;");
