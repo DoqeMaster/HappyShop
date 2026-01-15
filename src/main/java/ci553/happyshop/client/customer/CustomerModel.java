@@ -39,29 +39,44 @@ public class CustomerModel {
     //SELECT productID, description, image, unitPrice,inStock quantity
     void search() throws SQLException {
         String productId = cusView.tfId.getText().trim();
-        if(!productId.isEmpty()){
-            theProduct = databaseRW.searchByProductId(productId); //search database
-            if(theProduct != null && theProduct.getStockQuantity()>0){
-                double unitPrice = theProduct.getUnitPrice();
-                String description = theProduct.getProductDescription();
-                int stock = theProduct.getStockQuantity();
+        String productName = cusView.tfName.getText().trim();
+        theProduct = null;
 
-                String baseInfo = String.format("Product_Id: %s\n%s,\nPrice: £%.2f", productId, description, unitPrice);
-                String quantityInfo = stock < 100 ? String.format("\n%d units left.", stock) : "";
-                displayLaSearchResult = baseInfo + quantityInfo;
-                System.out.println(displayLaSearchResult);
-            }
-            else{
-                theProduct=null;
+        if (!productId.isEmpty()) {
+            theProduct = databaseRW.searchByProductId(productId); //search database
+            if (theProduct != null && theProduct.getStockQuantity() > 0) {
+                displayLaSearchResult = buildProductInfo(theProduct, productId);
+            } else {
                 displayLaSearchResult = "No Product was found with ID " + productId;
                 System.out.println("No Product was found with ID " + productId);
             }
-        }else{
-            theProduct=null;
-            displayLaSearchResult = "Please type ProductID";
-            System.out.println("Please type ProductID.");
+        } else if (!productName.isEmpty()) {
+            ArrayList<Product> matches = databaseRW.searchProduct(productName);
+            if (!matches.isEmpty()) {
+                theProduct = matches.get(0);
+                String matchInfo = matches.size() > 1
+                        ? String.format("Found %d matches for \"%s\". Showing the first result.\n",
+                        matches.size(), productName)
+                        : "";
+                displayLaSearchResult = matchInfo + buildProductInfo(theProduct, theProduct.getProductId());
+            } else {
+                displayLaSearchResult = "No Product was found matching \"" + productName + "\"";
+                System.out.println("No Product was found matching \"" + productName + "\"");
+            }
+        } else {
+            displayLaSearchResult = "Please type ProductID or Name";
+            System.out.println("Please type ProductID or Name.");
         }
         updateView();
+    }
+    private String buildProductInfo(Product product, String productId) {
+        double unitPrice = product.getUnitPrice();
+        String description = product.getProductDescription();
+        int stock = product.getStockQuantity();
+
+        String baseInfo = String.format("Product_Id: %s\n%s,\nPrice: £%.2f", productId, description, unitPrice);
+        String quantityInfo = stock < 100 ? String.format("\n%d units left.", stock) : "";
+        return baseInfo + quantityInfo;
     }
 
     void addToTrolley(){
